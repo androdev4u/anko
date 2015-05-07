@@ -83,7 +83,7 @@ class __AbsListView_OnScrollListener : android.widget.AbsListView.OnScrollListen
     public fun onScrollStateChanged(listener: (android.widget.AbsListView?, Int) -> Unit) {
         _onScrollStateChanged = listener
     }
-    override fun onScroll(p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int) = _onScroll?.invoke(view, firstVisibleItem, visibleItemCount, totalItemCount)
+    override fun onScroll(view: android.widget.AbsListView, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) = _onScroll?.invoke(view, firstVisibleItem, visibleItemCount, totalItemCount)
 
     public fun onScroll(listener: (android.widget.AbsListView, Int, Int, Int) -> Unit) {
         _onScroll = listener
@@ -143,7 +143,7 @@ class __SeekBar_OnSeekBarChangeListener : android.widget.SeekBar.OnSeekBarChange
     private var _onStartTrackingTouch: ((android.widget.SeekBar?) -> Unit)? = null
     private var _onStopTrackingTouch: ((android.widget.SeekBar) -> Unit)? = null
 
-    override fun onProgressChanged(p0: android.widget.SeekBar, p1: Int, p2: Boolean) = _onProgressChanged?.invoke(seekBar, progress, fromUser)
+    override fun onProgressChanged(seekBar: android.widget.SeekBar, progress: Int, fromUser: Boolean) = _onProgressChanged?.invoke(seekBar, progress, fromUser)
 
     public fun onProgressChanged(listener: (android.widget.SeekBar, Int, Boolean) -> Unit) {
         _onProgressChanged = listener
@@ -153,7 +153,7 @@ class __SeekBar_OnSeekBarChangeListener : android.widget.SeekBar.OnSeekBarChange
     public fun onStartTrackingTouch(listener: (android.widget.SeekBar?) -> Unit) {
         _onStartTrackingTouch = listener
     }
-    override fun onStopTrackingTouch(p0: android.widget.SeekBar) = _onStopTrackingTouch?.invoke(seekBar)
+    override fun onStopTrackingTouch(seekBar: android.widget.SeekBar) = _onStopTrackingTouch?.invoke(seekBar)
 
     public fun onStopTrackingTouch(listener: (android.widget.SeekBar) -> Unit) {
         _onStopTrackingTouch = listener
