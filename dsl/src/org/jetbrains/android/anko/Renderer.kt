@@ -367,17 +367,17 @@ class Renderer(private val generator: Generator) : Configurable(generator.config
 
         val listenerMethods = listener.methods.flatMap { method ->
             val varName = method.name.decapitalize()
-            val customArgumentsKey = "$listenerClassName#${method.name}"
-            val customArguments = Props.customMethodParameters.get(customArgumentsKey)
-            val arguments = customArguments ?: method.methodWithClass.formatArguments(config)
-            val substitution = method.methodWithClass.formatArgumentsNames(config)
-            val argumentTypes = method.methodWithClass.formatArgumentsTypes(config)
+            val methodWithClass = method.methodWithClass
+
+            val arguments = methodWithClass.formatArguments(config)
+            val argumentNames = methodWithClass.formatArgumentsNames(config)
+            val argumentTypes = methodWithClass.formatArgumentsTypes(config)
 
             buffer {
-                val defaultValue = method.methodWithClass.method.returnType.getDefaultValue()
+                val defaultValue = methodWithClass.method.returnType.getDefaultValue()
                 val returnDefaultValue = if (defaultValue.isNotEmpty()) " ?: $defaultValue" else ""
 
-                line("override fun ${method.name}($arguments) = _$varName?.invoke($substitution)$returnDefaultValue").nl()
+                line("override fun ${method.name}($arguments) = _$varName?.invoke($argumentNames)$returnDefaultValue").nl()
                 line("public fun ${method.name}(listener: ($argumentTypes) -> ${method.returnType}) {")
                 line("_$varName = listener")
                 line("}").nl()
