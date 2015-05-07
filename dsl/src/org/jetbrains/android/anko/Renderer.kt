@@ -253,11 +253,11 @@ class Renderer(private val generator: Generator) : Configurable(generator.config
     //example: fun android.view.View.onClick(l: (android.view.View?) -> Unit) = setOnClickListener(l)
     private fun renderSimpleListener(listener: SimpleListener): String {
         val className = listener.setter.clazz.fqNameWithTypeArguments
-        val argumentTypes = listener.method.argumentTypes
+        val arguments = listener.method.methodWithClass.formatArguments(config)
         val returnType = listener.method.returnType
 
         return buffer {
-            line("public fun $className.${listener.method.name}(l: ($argumentTypes) -> $returnType): Unit = ${listener.setter.method.name}(l)")
+            line("public fun $className.${listener.method.name}(l: ($arguments) -> $returnType): Unit = ${listener.setter.method.name}(l)")
         }.toString()
     }
 
@@ -360,7 +360,8 @@ class Renderer(private val generator: Generator) : Configurable(generator.config
         //field list (already with indentation)
         val fields = listener.methods.map { method ->
             val varName = method.name.decapitalize()
-            val lambdaType = "((${method.argumentTypes}) -> ${method.returnType})"
+            val argumentTypes = method.methodWithClass.formatArgumentsTypes(config)
+            val lambdaType = "(($argumentTypes) -> ${method.returnType})"
             "private var _$varName: $lambdaType? = null"
         }
 
@@ -370,12 +371,14 @@ class Renderer(private val generator: Generator) : Configurable(generator.config
             val customArguments = Props.customMethodParameters.get(customArgumentsKey)
             val arguments = customArguments ?: method.methodWithClass.formatArguments(config)
             val substitution = method.methodWithClass.formatArgumentsNames(config)
+            val argumentTypes = method.methodWithClass.formatArgumentsTypes(config)
+
             buffer {
                 val defaultValue = method.methodWithClass.method.returnType.getDefaultValue()
                 val returnDefaultValue = if (defaultValue.isNotEmpty()) " ?: $defaultValue" else ""
 
                 line("override fun ${method.name}($arguments) = _$varName?.invoke($substitution)$returnDefaultValue").nl()
-                line("public fun ${method.name}(listener: (${method.argumentTypes}) -> ${method.returnType}) {")
+                line("public fun ${method.name}(listener: ($argumentTypes) -> ${method.returnType}) {")
                 line("_$varName = listener")
                 line("}").nl()
             }.getLines()
